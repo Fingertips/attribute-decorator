@@ -2,12 +2,12 @@ require File.expand_path('../test_helper', __FILE__)
 
 describe "AttributeDecorator::attribute_decorator" do
   before do
-    setup_db
+    AttributeDecorator::Initializer.setup_database
     @artist = Artist.new
   end
   
   after do
-    teardown_db
+    AttributeDecorator::Initializer.teardown_database
   end
   
   it "should be defined" do
@@ -29,14 +29,14 @@ end
 
 describe "AttributeDecorator, an attribute decorator for multiple attributes" do
   before do
-    setup_db
+    AttributeDecorator::Initializer.setup_database
     
     @artist = Artist.create(:day => 31, :month => 12, :year => 1999)
     @decorator = @artist.date_of_birth
   end
   
   after do
-    teardown_db
+    AttributeDecorator::Initializer.teardown_database
   end
   
   it "should return a instance of the decorator class specified by the :class option" do
@@ -64,14 +64,14 @@ end
 
 describe "AttributeDecorator, an attribute decorator for one attribute" do
   before do
-    setup_db
+    AttributeDecorator::Initializer.setup_database
     
     @artist = Artist.create(:location => 'amsterdam')
     @decorator = @artist.gps_location
   end
   
   after do
-    teardown_db
+    AttributeDecorator::Initializer.teardown_database
   end
   
   it "should return a instance of the decorator class specified by the :class option" do
@@ -98,14 +98,14 @@ end
 
 describe "AttributeDecorator, an attribute decorator for an already existing attribute" do
   before do
-    setup_db
+    AttributeDecorator::Initializer.setup_database
     
     @artist = Artist.create(:start_year => 1999)
     @decorator = @artist.start_year
   end
   
   after do
-    teardown_db
+    AttributeDecorator::Initializer.teardown_database
   end
   
   it "should return a instance of the decorator class specified by the :class option" do
@@ -129,14 +129,14 @@ end
 
 describe "AttributeDecorator, a attribute decorator validator" do
   before do
-    setup_db
+    AttributeDecorator::Initializer.setup_database
     
     @artist = Artist.create(:start_year => 1999)
     @decorator = @artist.start_year
   end
   
   after do
-    teardown_db
+    AttributeDecorator::Initializer.teardown_database
     
     Artist.instance_variable_set(:@validate_callbacks, [])
     Artist.instance_variable_set(:@validate_on_update_callbacks, [])
