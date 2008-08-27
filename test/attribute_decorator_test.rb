@@ -27,6 +27,54 @@ describe "AttributeDecorator::attribute_decorator" do
   end
 end
 
+describe "AttributeDecorator, an attribute decorator in general" do
+  before do
+    AttributeDecorator::Initializer.setup_database
+    
+    @artist = Artist.create(:day => 31, :month => 12, :year => 1999)
+    @decorator = @artist.date_of_birth
+  end
+  
+  after do
+    AttributeDecorator::Initializer.teardown_database
+    Artist.class_eval do
+      attribute_decorator :date_of_birth, :class_name => 'CompositeDate', :decorates => [:day, :month, :year]
+    end
+  end
+  
+  it "should only use String#constantize once and cache the result" do
+    klass_name_string = 'CompositeDate'
+    
+    Artist.class_eval do
+      attribute_decorator :date_of_birth, :class_name => klass_name_string, :decorates => [:day, :month, :year]
+    end
+    
+    klass_name_string.expects(:constantize).times(1).returns(CompositeDate)
+    2.times { @artist.date_of_birth }
+  end
+  
+  it "should work with a real pointer to a wrapper class instead of a string as well" do
+    Artist.class_eval do
+      attribute_decorator :date_of_birth, :class => CompositeDate, :decorates => [:day, :month, :year]
+    end
+    
+    @artist.date_of_birth.to_s.should == "31-12-1999"
+  end
+  
+  it "should also work with an anonymous wrapper class" do
+    Artist.class_eval do
+      attribute_decorator :date_of_birth, :decorates => [:day, :month, :year], :class => (Class.new(CompositeDate) do
+        # Reversed implementation of the super class.
+        def to_s
+          "#{@year}-#{@month}-#{@day}"
+        end
+      end)
+    end
+    
+    2.times { @artist.date_of_birth.to_s.should == "1999-12-31" }
+  end
+end
+
 describe "AttributeDecorator, an attribute decorator for multiple attributes" do
   before do
     AttributeDecorator::Initializer.setup_database

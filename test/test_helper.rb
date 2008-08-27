@@ -28,6 +28,7 @@ module AttributeDecorator
       require 'rubygems' rescue LoadError
       
       require 'test/spec'
+      require 'mocha'
       require File.join(PLUGIN_ROOT, 'lib', 'attribute_decorator')
     end
     

@@ -55,7 +55,7 @@ module AttributeDecorator
   #   attribute_decorator :gps_location, :class_name => 'GPSCoordinator', :decorates => :location
   #   attribute_decorator :balance, :class_name => 'Money'
   def attribute_decorator(attr, options)
-    options.assert_valid_keys(:class_name, :decorates)
+    options.assert_valid_keys(:class, :class_name, :decorates)
     
     if options[:decorates].nil?
       options[:decorates] = [attr]
@@ -131,7 +131,7 @@ module AttributeDecorator
   def define_attribute_decorator_reader(attr, options)
     class_eval do
       define_method(attr) do
-        options[:class_name].constantize.new(*options[:decorates].map { |attribute| read_attribute(attribute) })
+        (options[:class] ||= options[:class_name].constantize).new(*options[:decorates].map { |attribute| read_attribute(attribute) })
       end
     end
   end
@@ -144,7 +144,7 @@ module AttributeDecorator
       
       define_method("#{attr}=") do |value|
         instance_variable_set("@#{attr}_before_type_cast", value)
-        values = options[:class_name].constantize.parse(value).to_a
+        values = (options[:class] ||= options[:class_name].constantize).parse(value).to_a
         options[:decorates].each_with_index { |attribute, index| write_attribute attribute, values[index] }
         value
       end
