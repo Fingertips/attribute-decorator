@@ -133,4 +133,8 @@ class GPSCoordinator
   def to_a
     [@location]
   end
+  
+  def to_s
+    @location
+  end
 end

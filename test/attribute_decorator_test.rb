@@ -39,7 +39,7 @@ describe "AttributeDecorator, an attribute decorator for multiple attributes" do
     AttributeDecorator::Initializer.teardown_database
   end
   
-  it "should return a instance of the decorator class specified by the :class option" do
+  it "should return a instance of the decorator class specified by the :class_name option" do
     @artist.date_of_birth.should.be.instance_of CompositeDate
   end
   
@@ -49,12 +49,18 @@ describe "AttributeDecorator, an attribute decorator for multiple attributes" do
     @decorator.year.should == 1999
   end
   
-  it "should store the original value that was passed to the decorator writer method in a foo_before_type_cast instance variable" do
+  it "should return the value before type cast when the value was set with the setter" do
     @artist.date_of_birth = '01-02-2000'
     @artist.date_of_birth_before_type_cast.should == '01-02-2000'
   end
   
-  it "should send the value that was passed to the decorator writer method to a ::parse class method on the decorator class" do
+  it "should return the value before type cast when the value was just read from the database" do
+    date_of_birth_as_string = @artist.date_of_birth.to_s
+    @artist.reload
+    @artist.date_of_birth_before_type_cast.should == date_of_birth_as_string
+  end
+  
+  it "should parse the value assigned through the setter method" do
     @artist.date_of_birth = '01-02-2000'
     @artist.day.should == 1
     @artist.month.should == 2
@@ -74,7 +80,7 @@ describe "AttributeDecorator, an attribute decorator for one attribute" do
     AttributeDecorator::Initializer.teardown_database
   end
   
-  it "should return a instance of the decorator class specified by the :class option" do
+  it "should return a instance of the decorator class specified by the :class_name option" do
     @artist.gps_location.should.be.instance_of GPSCoordinator
   end
   
@@ -82,12 +88,18 @@ describe "AttributeDecorator, an attribute decorator for one attribute" do
     @decorator.location.should == 'amsterdam'
   end
   
-  it "should store the original value that was passed to the decorator writer method in a foo_before_type_cast instance variable" do
+  it "should return the value before type cast when the value was set with the setter" do
     @artist.gps_location = 'rotterdam'
     @artist.gps_location_before_type_cast.should == 'rotterdam'
   end
   
-  it "should send the value that was passed to the decorator writer method to a ::parse class method on the decorator class" do
+  it "should return the value before type cast when the value was just read from the database" do
+    gps_location_as_string = @artist.gps_location.to_s
+    @artist.reload
+    @artist.gps_location_before_type_cast.should == gps_location_as_string
+  end
+  
+  it "should parse the value assigned through the setter method" do
     @artist.gps_location = 'amsterdam'
     @artist.location.should == '+1, +1'
     

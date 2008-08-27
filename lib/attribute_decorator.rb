@@ -138,7 +138,9 @@ module AttributeDecorator
   
   def define_attribute_decorator_writer(attr, options)
     class_eval do
-      attr_reader "#{attr}_before_type_cast"
+      define_method("#{attr}_before_type_cast") do
+        instance_variable_get("@#{attr}_before_type_cast") || send(attr).to_s
+      end
       
       define_method("#{attr}=") do |value|
         instance_variable_set("@#{attr}_before_type_cast", value)
