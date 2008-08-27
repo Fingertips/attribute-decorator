@@ -5,10 +5,12 @@ module AttributeDecorator
     PLUGIN_ROOT = File.expand_path('../../', __FILE__)
     
     def self.rails_directory
-      if File.exist?(VENDOR_RAILS)
-        VENDOR_RAILS
-      elsif File.exist?(OTHER_RAILS)
-        OTHER_RAILS
+      if File.basename(File.dirname(PLUGIN_ROOT)) == 'plugins'
+        if File.exist?(VENDOR_RAILS)
+          VENDOR_RAILS
+        elsif File.exist?(OTHER_RAILS)
+          OTHER_RAILS
+        end
       end
     end
     
